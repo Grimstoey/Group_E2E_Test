@@ -45,7 +45,8 @@ e2e-exercise/
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
-└── playwright.config.ts
+├── playwright.config.ts
+└── run-e2e.sh
 ```
 
 ไฟล์สำคัญมีหน้าที่ดังนี้:
@@ -59,6 +60,7 @@ e2e-exercise/
 | `tests/voter-sees-candidates.spec.ts` | ทดสอบ journey ตั้งแต่ลงทะเบียนจนเห็นรายชื่อผู้สมัคร |
 | `tests/voter-votes.spec.ts` | ทดสอบการลงคะแนนและสถานะ `selected` ของผู้สมัคร |
 | `tools/randomThaiNationalId.mjs` | สร้างเลขบัตรประชาชนทดสอบที่ผ่าน checksum |
+| `run-e2e.sh` | เตรียมฐานข้อมูล เปิด API รัน test และปิดระบบแบบอัตโนมัติ |
 
 ## ข้อมูลทดสอบ
 
@@ -138,6 +140,26 @@ npm test
 ```bash
 BASE_URL=http://localhost:3000 npm test
 ```
+
+## รันครบวงจรด้วยคำสั่งเดียว
+
+หลังจากติดตั้ง dependency แล้ว สามารถเตรียมระบบ รันทดสอบ และปิดระบบด้วยคำสั่งเดียว:
+
+```bash
+npm run test:full
+```
+
+คำสั่งนี้ทำงานตามลำดับดังนี้:
+
+```text
+สร้างฐานข้อมูล E2E ใหม่
+→ สร้าง schema และใส่ seed
+→ build และเปิด Election API
+→ รัน Playwright tests
+→ ปิด API และฐานข้อมูล
+```
+
+script ใช้ exit trap เพื่อปิด container ทั้งเมื่อ test ผ่านและเมื่อเกิดข้อผิดพลาด จึงเหมาะสำหรับใช้ใน CI และช่วยป้องกัน container ค้างหลังจบงาน
 
 ## สิ่งที่ตรวจใน journey หลัก
 
