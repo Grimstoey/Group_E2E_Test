@@ -205,6 +205,8 @@ test ส่ง `GET /me/candidates` โดยไม่มี `Authorization` hea
 
 ## รายงานผลการทดสอบ
 
+บันทึกการรันครบวงจรล่าสุดอยู่ที่ [`test-logs/e2e-full-2026-10-17.log`](test-logs/e2e-full-2026-10-17.log) ภายใน log มีขั้นตอนสร้างฐานข้อมูล migrate, build API, ผล Playwright `4 passed` และการ cleanup container หลังจบงาน
+
 หลังจากรัน `npm test` แล้ว สามารถเปิด HTML report ได้ด้วย:
 
 ```bash
