@@ -36,8 +36,10 @@ e2e-exercise/
 ├── support/
 │   └── electionApi.ts
 ├── tests/
+│   ├── authentication.spec.ts
 │   ├── health.spec.ts
-│   └── voter-sees-candidates.spec.ts
+│   ├── voter-sees-candidates.spec.ts
+│   └── voter-votes.spec.ts
 ├── tools/
 │   └── randomThaiNationalId.mjs
 ├── .gitignore
@@ -52,8 +54,10 @@ e2e-exercise/
 |---|---|
 | `playwright.config.ts` | กำหนด test directory, base URL, HTTP headers และรูปแบบรายงาน |
 | `support/electionApi.ts` | รวมการเรียก register, login, ดูผู้สมัคร และลงคะแนนผ่าน HTTP |
+| `tests/authentication.spec.ts` | ตรวจว่าการขอรายชื่อโดยไม่มี token ถูกปฏิเสธด้วย `401` |
 | `tests/health.spec.ts` | ตรวจว่า Election API เปิดและตอบ `GET /health` ได้ |
 | `tests/voter-sees-candidates.spec.ts` | ทดสอบ journey ตั้งแต่ลงทะเบียนจนเห็นรายชื่อผู้สมัคร |
+| `tests/voter-votes.spec.ts` | ทดสอบการลงคะแนนและสถานะ `selected` ของผู้สมัคร |
 | `tools/randomThaiNationalId.mjs` | สร้างเลขบัตรประชาชนทดสอบที่ผ่าน checksum |
 
 ## ข้อมูลทดสอบ
@@ -119,13 +123,15 @@ npm test
 ผลที่คาดหวัง:
 
 ```text
-2 passed
+4 passed
 ```
 
 ชุดทดสอบประกอบด้วย:
 
 1. `the election API is up`
-2. `a voter registers and then sees the candidates of their district`
+2. `requesting candidates without a token is rejected`
+3. `a voter registers and then sees the candidates of their district`
+4. `a voter votes for candidate number 1 and sees only that candidate selected`
 
 สามารถกำหนด API ปลายทางอื่นผ่าน environment variable `BASE_URL` ได้ เช่น:
 
@@ -155,6 +161,25 @@ BASE_URL=http://localhost:3000 npm test
 ### 4. ตรวจรายชื่อ
 
 ตรวจว่า response มีผู้สมัครสองคนตามลำดับหมายเลข ไม่มีผู้สมัครจากเขตอื่น และ voter ใหม่มี `selected: false` ทั้งสองรายการ
+
+## Exercise เพิ่มเติม
+
+### S3 — voter ลงคะแนนให้ผู้สมัครหมายเลข 1
+
+test ลงทะเบียน voter คนใหม่ เข้าสู่ระบบ และขอรายชื่อผู้สมัครเพื่อหา `candidateId` ของหมายเลข 1 จาก API จากนั้นส่ง `PUT /me/vote` และตรวจว่า:
+
+- การลงคะแนนครั้งแรกได้ status `201`
+- response มี `changed: false`
+- เมื่อขอรายชื่ออีกครั้ง หมายเลข 1 มี `selected: true`
+- หมายเลข 2 ยังคงมี `selected: false`
+
+### S7 — ขอรายชื่อโดยไม่มี token
+
+test ส่ง `GET /me/candidates` โดยไม่มี `Authorization` header แล้วตรวจว่าได้ status `401` และ response ต่อไปนี้:
+
+```json
+{"error":"authentication required"}
+```
 
 ## รายงานผลการทดสอบ
 
@@ -197,4 +222,4 @@ docker compose --profile e2e down
 
 ## สรุปผล
 
-ผลการทดสอบรอบสุดท้ายผ่านทั้งหมด 2 tests หลังจากลบและสร้างสภาพแวดล้อมใหม่ จึงยืนยันได้ว่า Election API รองรับ journey การลงทะเบียน เข้าสู่ระบบ และแสดงรายชื่อผู้สมัครตามเขตได้ตามที่กำหนด รวมถึงสามารถรันทดสอบซ้ำจากข้อมูลเริ่มต้นชุดเดิมได้
+ผลการทดสอบรอบสุดท้ายผ่านทั้งหมด 4 tests หลังจากลบและสร้างสภาพแวดล้อมใหม่ จึงยืนยันได้ว่า Election API รองรับ journey การลงทะเบียน เข้าสู่ระบบ แสดงรายชื่อผู้สมัครตามเขต ป้องกันการเข้าถึงโดยไม่มี token และบันทึกการลงคะแนนได้ตามที่กำหนด รวมถึงสามารถรันทดสอบซ้ำจากข้อมูลเริ่มต้นชุดเดิมได้
