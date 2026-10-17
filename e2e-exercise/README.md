@@ -203,6 +203,21 @@ test ส่ง `GET /me/candidates` โดยไม่มี `Authorization` hea
 {"error":"authentication required"}
 ```
 
+### การแยก `register` และ `login` เป็น helper class
+
+สร้าง class `ElectionApi` ไว้ใน `support/electionApi.ts` เพื่อรวมการเรียก Election API ที่ใช้ซ้ำในหลาย test โดยรับ `APIRequestContext` จาก Playwright ผ่าน constructor ภายใน class มี method `register`, `login`, `myCandidates` และ `vote` ทำให้ test แสดงลำดับการใช้งานของ voter ได้ชัดเจน และไม่ต้องเขียน URL หรือ Authorization header ซ้ำทุกไฟล์
+
+เมื่อนำไปเทียบกับ [`app/e2e/support/electionApi.ts` ของตัวอย่าง](https://github.com/boyone/camt-software-testing/blob/jest/lab/e2e-exercise-test/app/e2e/support/electionApi.ts) พบว่าวิธีจัดโครงสร้างเหมือนกันในส่วนต่อไปนี้:
+
+- ใช้ class ครอบ `APIRequestContext` และติดต่อระบบผ่าน HTTP เท่านั้น
+- แยกการ login และการสร้าง Authorization header ออกจาก test case
+- ตรวจ status และ token ภายในขั้นตอน login เพื่อให้ test หยุดตรงสาเหตุเมื่อเข้าสู่ระบบไม่สำเร็จ
+- มี method สำหรับลงคะแนนและอ่านรายชื่อผู้สมัคร ทำให้หลาย test ใช้ code ร่วมกันได้
+
+ส่วนที่แตกต่างคือ helper ของตัวอย่างรองรับ journey มากกว่า เช่น การสร้างพรรค เพิ่มผู้สมัคร และอ่านผลการเลือกตั้ง รวมทั้งมี `newVoterIn()` ที่ลงทะเบียนและ login ต่อกันใน method เดียว ส่วน helper ของงานนี้มีเฉพาะ endpoint ที่ใช้ใน S1, S3 และ S7 และแยก `register()` ออกจาก `login()` เพื่อให้ test หลักตรวจ response ของการลงทะเบียนได้ครบทั้ง status, role และการไม่มี `passwordHash`
+
+ตัวอย่างสร้างเลขบัตรประชาชนใหม่ระหว่างการรันด้วย `uniqueNationalId()` เพื่อให้สร้าง voter หลายคนได้สะดวก งานนี้ใช้เลขที่ผ่าน checksum และกำหนดค่าคงที่แยกกันในแต่ละ test เพื่อให้ request เหมือนเดิมทุกรอบ หาก test ล้มเหลวจะสามารถใช้เลขเดิมตรวจข้อมูลใน database และ log ได้โดยตรง โดย `npm run test:full` จะสร้างฐานข้อมูลใหม่ก่อนรัน จึงไม่เกิดข้อมูลซ้ำระหว่างรอบ
+
 ## รายงานผลการทดสอบ
 
 บันทึกการรันครบวงจรล่าสุดอยู่ที่ [`test-logs/e2e-full-2026-10-17.log`](test-logs/e2e-full-2026-10-17.log) ภายใน log มีขั้นตอนสร้างฐานข้อมูล migrate, build API, ผล Playwright `4 passed` และการ cleanup container หลังจบงาน
