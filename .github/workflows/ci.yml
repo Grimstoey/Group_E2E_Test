@@ -59,3 +59,25 @@ jobs:
         with:
           name: playwright-report
           path: app/playwright-report
+
+  e2e-exercise:
+    needs: integration
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: e2e-exercise
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: e2e-exercise/package-lock.json
+      - run: npm ci
+      # Recreates the E2E database, seeds it, starts the API, runs this lab's tests, and cleans up.
+      - run: npm run test:full
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-exercise-playwright-report
+          path: e2e-exercise/playwright-report
