@@ -1,0 +1,13 @@
+{
+  "name": "election-testing-slides",
+  "private": true,
+  "description": "Marp slides for Software Testing in Real Industry, the CMU CAMT hands-on automated testing workshop",
+  "scripts": {
+    "serve": "marp --server decks",
+    "build": "marp --input-dir decks --output dist",
+    "pdf": "marp --input-dir decks --output dist --pdf"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.5.1"
+  }
+}
