@@ -1,0 +1,208 @@
+
+> e2e-exercise@1.0.0 test:full
+> ./run-e2e.sh
+
+ Network election_default Creating 
+ Network election_default Creating 
+ Network election_default Created 
+ Network election_default Created 
+ Container election-db-e2e-1 Creating 
+ Container election-db-e2e-1 Created 
+ Container election-db-e2e-1 Starting 
+ Container election-db-e2e-1 Started 
+ Container election-db-e2e-1 Waiting 
+ Container election-db-e2e-1 Healthy 
+
+> election-backend@1.0.0 db:migrate:e2e-exercise
+> docker compose run --rm --build -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://db-e2e:5432/election_e2e -e LIQUIBASE_COMMAND_CONTEXTS=e2e,e2e-exercise liquibase update
+
+ Image election-liquibase Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 580B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 433B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/liquibase/liquibase:5.0.4
+#3 DONE 2.2s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [1/4] FROM docker.io/liquibase/liquibase:5.0.4@sha256:060f96efff4811ccf03957ff3160f21ea04139b89940640f8ad54a065cdc6906
+#6 resolve docker.io/liquibase/liquibase:5.0.4@sha256:060f96efff4811ccf03957ff3160f21ea04139b89940640f8ad54a065cdc6906 0.1s done
+#6 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 523B done
+#5 DONE 0.0s
+
+#7 [2/4] RUN lpm add postgresql --global
+#7 CACHED
+
+#8 [3/4] COPY changelog /liquibase/changelog
+#8 CACHED
+
+#9 [4/4] WORKDIR /liquibase/changelog
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers 0.0s done
+#10 exporting manifest sha256:1f4d1a4718cb296d7d69f3e3129abf03b7731c4e499d2b551eab74dd438759f2 done
+#10 exporting config sha256:785ea34d026a4637aacce639df5967f8143003594f4efe43e9fc57d767d066d7 done
+#10 exporting attestation manifest sha256:f2c510b56a11489748b838d348264b0f9274a975689fc6e68aa5568bbfdcf581
+#10 exporting attestation manifest sha256:f2c510b56a11489748b838d348264b0f9274a975689fc6e68aa5568bbfdcf581 0.1s done
+#10 exporting manifest list sha256:22feb5eaca2bbfaeca0ab5b01f3a73fee07f1e09a818060c5e4dbd09cc34dafc 0.1s done
+#10 naming to docker.io/library/election-liquibase:latest
+#10 naming to docker.io/library/election-liquibase:latest done
+#10 unpacking to docker.io/library/election-liquibase:latest 0.0s done
+#10 DONE 0.3s
+
+#11 resolving provenance for metadata file
+#11 DONE 0.0s
+ Image election-liquibase Built 
+ Container election-liquibase-run-f3b76f080249 Creating 
+ Container election-liquibase-run-f3b76f080249 Created 
+Starting Liquibase at 08:29:09 using Java 21.0.11 (version 5.0.4 #11282 built at 2026-08-18 12:10:05 UTC)
+Liquibase Version: 5.0.4
+
+Running Changeset: changes/001-districts.sql::001-create-districts::election
+Running Changeset: changes/001-districts.sql::001-seed-districts::election
+Running Changeset: changes/002-users.sql::002-create-users::election
+Running Changeset: changes/003-parties-candidates.sql::003-create-parties::election
+Running Changeset: changes/003-parties-candidates.sql::003-create-candidates::election
+Running Changeset: changes/004-election-votes.sql::004-create-election::election
+Running Changeset: changes/004-election-votes.sql::004-create-votes::election
+Running Changeset: db.changelog-master.yaml::tag-day1::election
+Running Changeset: changes/901-e2e-seed.sql::901-seed-e2e-accounts::election
+Running Changeset: changes/901-e2e-seed.sql::901-seed-e2e-election::election
+Running Changeset: changes/902-e2e-exercise-seed.sql::902-seed-e2e-exercise-parties::election
+Running Changeset: changes/902-e2e-exercise-seed.sql::902-seed-e2e-exercise-candidates::election
+
+UPDATE SUMMARY
+Run:                         12
+Previously run:               0
+Filtered out:                 3
+-------------------------------
+Total change sets:           15
+
+
+FILTERED CHANGE SETS SUMMARY
+Context mismatch:             3
+
+Liquibase: Update has been successful. Rows affected: 13
+Liquibase command 'update' was executed successfully.
+ Image election-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 550B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 403B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:24-alpine
+#3 DONE 1.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 101B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [build 1/7] FROM docker.io/library/node:24-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f
+#6 resolve docker.io/library/node:24-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f 0.1s done
+#6 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 1.20kB 0.0s done
+#5 DONE 0.0s
+
+#7 [build 5/7] COPY tsconfig.json tsconfig.build.json ./
+#7 CACHED
+
+#8 [build 7/7] RUN npm run build
+#8 CACHED
+
+#9 [build 3/7] COPY package.json package-lock.json ./
+#9 CACHED
+
+#10 [stage-1 4/5] RUN npm ci --omit=dev
+#10 CACHED
+
+#11 [build 6/7] COPY src ./src
+#11 CACHED
+
+#12 [build 4/7] RUN npm ci
+#12 CACHED
+
+#13 [build 2/7] WORKDIR /app
+#13 CACHED
+
+#14 [stage-1 5/5] COPY --from=build /app/dist ./dist
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:f116e2e7855d662fd64f70e657a642167fa0f429f27d0251f6a89fbc7d38c51e done
+#15 exporting config sha256:014e9156d44680d1870a0cb971e70d6159565b7323ed2555a1ef13fdbd5dbc7b done
+#15 exporting attestation manifest sha256:36c9e106ddf46c4c7725e83866386eedb1ea1ee7da8fd04ef43fd90f66c7f45a
+#15 exporting attestation manifest sha256:36c9e106ddf46c4c7725e83866386eedb1ea1ee7da8fd04ef43fd90f66c7f45a 0.1s done
+#15 exporting manifest list sha256:49ba1252e36f01d42f8f292ec0f3ca67b1dcbfc23e701cd1f4e88fb8f7794cbd 0.0s done
+#15 naming to docker.io/library/election-app:latest
+#15 naming to docker.io/library/election-app:latest done
+#15 unpacking to docker.io/library/election-app:latest 0.0s done
+#15 DONE 0.3s
+
+#16 resolving provenance for metadata file
+#16 DONE 0.0s
+ Image election-app Built 
+ Container election-db-e2e-1 Running 
+ Container election-app-1 Creating 
+ Container election-app-1 Created 
+ Container election-db-e2e-1 Waiting 
+ Container election-db-e2e-1 Healthy 
+ Container election-app-1 Starting 
+ Container election-app-1 Started 
+ Container election-db-e2e-1 Waiting 
+ Container election-app-1 Waiting 
+ Container election-db-e2e-1 Healthy 
+ Container election-app-1 Healthy 
+
+> e2e-exercise@1.0.0 test
+> playwright test
+
+
+Running 4 tests using 4 workers
+
+(node:86095) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86094) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86102) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86101) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/authentication.spec.ts:3:5 › requesting candidates without a token is rejected (59ms)
+  ✓  4 tests/health.spec.ts:4:5 › the election API is up (65ms)
+  ✓  1 tests/voter-sees-candidates.spec.ts:4:5 › a voter registers and then sees the candidates of their district (362ms)
+  ✓  3 tests/voter-votes.spec.ts:12:5 › a voter votes for candidate number 1 and sees only that candidate selected (350ms)
+
+  4 passed (1.1s)
+ Container election-app-1 Stopping 
+ Container election-app-1 Stopped 
+ Container election-app-1 Removing 
+ Container election-app-1 Removed 
+ Container election-db-e2e-1 Stopping 
+ Container election-db-e2e-1 Stopped 
+ Container election-db-e2e-1 Removing 
+ Container election-db-e2e-1 Removed 
+ Network election_default Removing 
+ Network election_default Removed 
