@@ -33,6 +33,8 @@ GET /me/candidates
 
 ```text
 e2e-exercise/
+├── support/
+│   └── electionApi.ts
 ├── tests/
 │   ├── health.spec.ts
 │   └── voter-sees-candidates.spec.ts
@@ -49,6 +51,7 @@ e2e-exercise/
 | ไฟล์ | หน้าที่ |
 |---|---|
 | `playwright.config.ts` | กำหนด test directory, base URL, HTTP headers และรูปแบบรายงาน |
+| `support/electionApi.ts` | รวมการเรียก register, login, ดูผู้สมัคร และลงคะแนนผ่าน HTTP |
 | `tests/health.spec.ts` | ตรวจว่า Election API เปิดและตอบ `GET /health` ได้ |
 | `tests/voter-sees-candidates.spec.ts` | ทดสอบ journey ตั้งแต่ลงทะเบียนจนเห็นรายชื่อผู้สมัคร |
 | `tools/randomThaiNationalId.mjs` | สร้างเลขบัตรประชาชนทดสอบที่ผ่าน checksum |

@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { ElectionApi } from '../support/electionApi';
 
 test('a voter registers and then sees the candidates of their district', async ({ request }) => {
+  const api = new ElectionApi(request);
+
   // Test data owned by this test case only. nationalId came from `node tools/randomThaiNationalId.mjs`.
   const voter = {
     nationalId: '9267607540395',
@@ -13,7 +16,7 @@ test('a voter registers and then sees the candidates of their district', async (
 
   // 1st step: voter goes to register
   const registerRes = await test.step('voter registers', () =>
-    request.post('/auth/register', { data: voter }),
+    api.register(voter),
   );
 
   // 2nd step: assert the response
@@ -33,19 +36,13 @@ test('a voter registers and then sees the candidates of their district', async (
   });
 
   // 3rd step: voter logs in
-  const token = await test.step('voter logs in', async () => {
-    const loginRes = await request.post('/auth/login', {
-      data: { nationalId: voter.nationalId, password: voter.password },
-    });
-    expect(loginRes.status(), await loginRes.text()).toBe(200);
-    const { token } = await loginRes.json();
-    expect(token).toEqual(expect.any(String));
-    return token;
-  });
+  const token = await test.step('voter logs in', () =>
+    api.login({ nationalId: voter.nationalId, password: voter.password }),
+  );
 
   // 4th step: voter requests the candidates from the election API
   const candidatesRes = await test.step('voter requests their candidates', () =>
-    request.get('/me/candidates', { headers: { Authorization: `Bearer ${token}` } }),
+    api.myCandidates(token),
   );
 
   // 5th step: assert the candidates (the ones from 902-e2e-exercise-seed.sql)
